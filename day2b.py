@@ -10,23 +10,20 @@ PP_ARGS = False, False #rotate, cast int
 DAY = 2
 TEST_DELIM = "---"
 FILE_DELIM = ","
-TESTS = """11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124///1227775554
+TESTS = """11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124///4174379265
 """
 
 DEBUG = True
 
 def invalid_id(data):
     data = str(data)
-    if len(data) % 2 == 1:
-        return False
-    
-    half = len(data) // 2
-    for i in range(0, half):
-        if not data[i] == data[half+i]:
-            return False
-        
-    return True
 
+    for j in range(0, len(data)):
+        chunk = data[:j+1]
+        for x in range(2, 10):
+            if chunk * x == data:
+                return True
+    return False
 
 
 
@@ -35,8 +32,8 @@ def solve(data):
     for row in data:
         first, last = row.split("-")
         for id in range(int(first), int(last)+1):
-            if invalid_id(id):
-                print("Invalid", id)
+            if invalid_id(id):               
+                
                 tot += int(id)
 
 
