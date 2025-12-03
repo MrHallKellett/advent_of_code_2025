@@ -7,37 +7,37 @@ from helpers import *
 
 PP_ARGS = False, False #rotate, cast int
 
-DAY = 2
+DAY = 3
 TEST_DELIM = "---"
-FILE_DELIM = ","
-TESTS = """11-22,95-115,998-1012,1188511880-1188511890,222220-222224,1698522-1698528,446443-446449,38593856-38593862,565653-565659,824824821-824824827,2121212118-2121212124///4174379265
+FILE_DELIM = "\n"
+TESTS = """987654321111111
+811111111111119
+234234234234278
+818181911112111///357
 """
 
 DEBUG = True
 
-def invalid_id(data):
-    data = str(data)
-
-    for j in range(0, len(data)//2):
-        chunk = data[:j+1]
-        for x in range(2, 10):
-            if chunk * x == data:
-                return True
-    return False
-
-
 
 def solve(data):
-    tot = 0
+    total = 0
+
+    upper = max(map(int, data))
+
     for row in data:
-        first, last = row.split("-")
-        for id in range(int(first), int(last)+1):
-            if invalid_id(id):               
+        
+        for comb in range(99, 9, -1):
+            
+            
+            x, y = list(str(comb))
+            result = search(f"{x}[1-9]*{y}", row)
+            if result is not None:
                 
-                tot += id
+                total += comb
+                print(f"In {row}, you can make the largest joltage possible, {comb},")
+                break
 
-
-    return tot
+    return total
 
 
 
