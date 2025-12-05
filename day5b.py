@@ -23,7 +23,7 @@ TESTS = """3-5
 32///14
 """
 
-DEBUG = True
+DEBUG = False
 
 class Range:
     def __init__(self, start, stop):
@@ -34,20 +34,39 @@ class Range:
         return f"{self.start}-{self.stop}"
 
     def count(self):
-        return self.stop - self.start
+        return self.stop - self.start + 1
+    
 
-    def update(self, other):
-        merge = False
-        if other.start <= self.stop and other.start >= self.start:
-            self.stop = other.stop
-            merge = True
-        elif other.stop >= self.start and other.stop <= self.stop:
+
+    def merge_and_get_deleted(self, other):
+        p.bugprint(f"comparing {self} against {other}")
+        if other.start > self.stop:
+            p.bugprint("other lies completely to the right of me")
+            return None
+        # other lies completely to the right of me
+        elif other.stop < self.start:
+            p.bugprint("other lies completely to the left of me")
+            return None
+        # other is completely contained within me
+        elif other.start >= self.start and other.start <= self.stop and other.stop >= self.start and other.stop <= self.stop:
+                p.bugprint("# other is completely contained within me")
+                return other
+        # other is completely contained within me
+        elif self.start >= other.start and self.start <= other.stop and self.stop >= other.start and self.stop <= other.stop:
+                self.stop = other.stop
+                self.start = other.start
+                p.bugprint("# other is completely contained within me")
+                return other
+        # the other intersects my left
+        elif other.stop >= self.start and other.stop <= self.stop:    
             self.start = other.start
-            merge = True
-        
-        if merge:
-            print(f"Merging {self} with {other}")
-        return merge
+            p.bugprint("# # the other intersects my left")
+            return other
+        # the other intersect my right
+        elif other.start <= self.stop and other.start >= self.start:
+            self.stop = other.stop
+            p.bugprint(f"# the other intersect my right")
+            return other
 
 def solve(data):
     count = 0
@@ -63,30 +82,36 @@ def solve(data):
 
      
     
+    # go through each range
 
-    merge = True
-    while merge:
-        merge = False
-        i = 0
-        while not merge and i < len(ranges):
-            j = 0
-            r1 = ranges[i]
-            while not merge and j < len(ranges):
-                r2 = ranges[j]
-            
-                if r1 == r2:    continue
+    repeat = True
 
-                if r1.update(r2):
-                    remove_this_range = r2
-                    merge = True
-                
-                j += 1
-            i += 1
+    while repeat:
+        repeat = False
+
+        for this_range in ranges:
+
+            for other_range in ranges:
+
+                if this_range == other_range: continue
+
+                to_delete = this_range.merge_and_get_deleted(other_range)
+
+                if to_delete is not None:
+                    repeat = True
+                    break
+
+            if to_delete is not None:
+                break
         
-        if merge:
-            ranges.remove(remove_this_range)
+        if to_delete is not None:
+            ranges.remove(to_delete)
+            p.bugprint("Ranges remaining: ", ranges)
 
 
+
+
+    # and merge this range with any of the other ranges...
 
     
 
