@@ -27,35 +27,33 @@ def solve(data):
 
     for row in data:
         needed = 12
+        orig_row = row
         all_indices = []
         print("ROW IS", row)
         finished = False
-        for digit in range(9, 0, -1):
-            digit = str(digit)
+  
+        final = ""
+        while len(final) != needed:
 
-            these_indices = sorted([max_length-i-1 for i, v in enumerate(reversed(row)) if v == digit], reverse=True)
+            for search_digit in range(9, -1, -1):
+                search_digit = str(search_digit)
+                print("Searching for", search_digit)
+                for i in range(len(row)-1, -1, -1):
 
-            print(f"These are the indicies of {digit}: {these_indices}")
+                    check_digit = row[i]
+                    print("check against", check_digit)
+                    if check_digit == search_digit:
+                        final = final + search_digit
+                        row = row[:i]
+                        print("Final is now", final)
+                        print("Reducing search space to", row)
+                        input()
 
-            input()
-
-            for index in these_indices:
-                if len(all_indices) < 12:
-                    all_indices.append(index)
-                else:
-
-                    all_indices = sorted(all_indices[:12])
-
-                    print("indicies in order are: ")
-                    print(all_indices)
                     
-
-                    number = int("".join([row[i] for i in all_indices]))
-                    
-                    print(f"In {row}, the largest joltage can be found to produce {number}.")
-                    total += number
-                    input()
-                    break
+        print(f"In {orig_row}, the largest joltage can be found to produce {final}.")
+        total += int(final)
+        
+        
 
 
 
